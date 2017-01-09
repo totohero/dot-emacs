@@ -275,82 +275,6 @@
   
   (setq compilation-finish-function 'highlight-error-lines))
 
-;;(eval-after-load "vc" '(require 'vc+))
-
-;;(eval-after-load "vc" '(require 'vc-hg+))
-
-;; 윈도우즈에서 실행시에 clearcase 관련 기능 설정
-(when (equal system-type 'windows-nt)
-  ;; clearcase 관련 기능
-  (when nil (require 'clearcase))
-
-  (when nil
-    (progn
-      (require 'vc-clearcase+)
-      ;;(load "vc-clearcase-auto")
-      (setq clearcase-checkout-comment-type 'none)
-      (setq clearcase-checkout-policy 'unreserved)
-      (defun ctdiffr ()
-	"Find any difference with ClearCase VOB"
-	(interactive)
-	(progn
-	  (let((buf-name "*diffr*"))
-	    (if (get-buffer buf-name)
-		(kill-buffer buf-name) t)
-	    ;;    (cdp)
-	    (start-process "ctdiff" buf-name "ctdiff.bat" "-r")
-	    (switch-to-buffer buf-name)
-	    (diff-mode))))
-      (defun ctdiff ()
-	"Find any difference with predecessor"
-	(interactive)
-	(progn
-	  (let((buf-name "*diff*"))
-	    (if (get-buffer buf-name)
-		(kill-buffer buf-name) 'very-false)
-	    (start-process "ctdiff" buf-name "ctdiff.bat" (buffer-name))
-	    (split-window)
-	    (switch-to-buffer buf-name)
-	    (diff-mode)))))))
-
-(when t
-  (defun hgdiffr()
-    "Find any difference with Mercurial Repo"
-    (interactive)
-    (progn
-      (let((buf-name "*diffr*"))
-	(if (get-buffer buf-name)
-	    (kill-buffer buf-name) t)
-	(require 'vc-hg)
-	(dired (vc-hg-root default-directory))
-	(start-process "hg" buf-name "hg" "diff" "-bw")
-	(switch-to-buffer buf-name)
-	(diff-mode))))
-
-  (defun hgqdiffr ()
-    "Find any difference with Mercurial Repo"
-    (interactive)
-    (progn
-      (let ((buf-name "*diffr*"))
-	(if (get-buffer buf-name)
-	    (kill-buffer buf-name) t)
-	(require ' vc-hg)
-	(dired(vc-hg-root default-directory))
-	(start-process "hg" buf-name "hg" "qdiff" "")
-	(switch-to-buffer buf-name)
-	(diff-mode))))
-
-  (defun svndiffr()
-    "Find any changes in local repo"
-    (interactive)
-    (progn
-      (let ((buf-name "*diffr*"))
-	(if (get-buffer buf-name)
-	    (kill-buffer buf-name) t);; (cdb)
-	(start-process "svn" buf-name "svn" "diff")
-	(switch-to-buffer buf-name)
-	(diff-mode)))))
-
 ;; diff 폰트 설정
 (eval-after-load "diff-mode"
   '(progn
@@ -507,54 +431,6 @@
 
 (global-set-key (kbd "C-<f4>") 'kill-other-buffers)
 
-;; tabbar를 사용한다!
-;; (when (and t (require 'tabbar nil t))
-;;   (setq tabbar-buffer-groups-function
-;; 	(lambda (b) (list
-;; 		     ;; 1. 각 버퍼의 major mode 문자열을 그 버퍼의 첫번째 tabbar 그룹 이름으로 삼는다.
-;; 		     ;;(prin1-to-string (buffer-local-value 'major-mode (get-buffer b)))
-;; 		     ;; 2. 각 버퍼가 특수 버퍼인지 아닌지를 체크하여 두번째 tabbar 그룹 이름으로 삼는다.
-;; 		     (cond ((let ((fc (aref b 0))) (or (char-equal fc ? ) (char-equal fc ?*)))
-;; 			    "Special Buffers")
-;; 			   ((eq (buffer-local-value 'major-mode (get-buffer b)) 'dired-mode)
-;; 			    "Dired Buffers")
-;; 			   (t "Normal Buffers")))))
-
-;;   ;;  (setq tabbar-buffer-groups-function
-;;   ;; 	 (lambda (b) (if (let ((fc (aref b 0)))
-;;   ;; 			   (or (char-equal fc ? ) (char-equal fc ?*)))
-;;   ;; 			 (list "Special Buffers")
-;;   ;; 		       (list "Normal Buffers"))))
-
-;;   ;; (setq tabbar-buffer-groups-function
-;;   ;; 	(lambda (b) (list "All Buffers")))
-
-;;   ;; (setq tabbar-buffer-list-function
-;;   ;; 	(lambda ()
-;;   ;; 	  (remove-if nil
-;;   ;; 	   (lambda (buffer)
-;;   ;; 	     (find (aref (buffer-name buffer) 0) " *")) ;; 버퍼 이름의 첫글자가 공백 혹은 *인지 체크한다.
-;;   ;; 	   (buffer-list))))
-
-;;   (set-face-attribute 'tabbar-default-face nil
-;;   		      :background "gray80" :foreground "black")
-;;   (set-face-attribute 'tabbar-unselected-face nil
-;;   		      :background "grey80" :foreground "black"
-;;   		      :box '(:line-width 1 :color "gray80" :style release-button))
-;;   (set-face-attribute 'tabbar-selected-face nil
-;;   		      :background "white" :foreground "black"
-;;   		      :box '(:line-width 1 :color "gray80" :style pressed-button))
-;;   (set-face-attribute 'tabbar-button-face nil
-;;   		      :box '(:line-width 1 :color "gray80" :style released-button))
-;;   (set-face-attribute 'tabbar-separator-face nil
-;;   		      :box '(:line-width 3 :color "gray80")) ;;:height 1)
-;;   (setq tabbar-cycling-scope (quote groups))
-;;   (tabbar-mode)
-;;   (global-set-key (kbd "<f11>") 'tabbar-backward-group)
-;;   (global-set-key (kbd "<f12>") 'tabbar-forward-group)
-;;   (global-set-key (kbd "<f1>") 'tabbar-backward-tab)
-;;   (global-set-key (kbd "<f2>") 'tabbar-forward-tab))
-
 (when t
   (require 'tabbar)
   (tabbar-mode)
@@ -656,79 +532,10 @@
   (add-hook 'cc-mode-hook 'c-set-linux-style)
   (add-hook 'c++-mode-hook 'c-set-linux-style))
 
-(when nil
-  (defun ted-tab-dwim ()
-    "If point is before the code on this line, indent this line.
- Otherwise, insert a TAB."
-    (interactive)
-    (let ((pivot (save-excursion (back-to-indentation) (point))))
-      (if (< pivot (point))
-	  ;;    (call-interactively 'self-insert-command)
-	  (insert "\t")
-	(call-interactively 'indent-for-tab-command))))
-  ;; (global-set-key (kbd "<tab>") 'ted-tab-dwim)
-  (defun my-tab-key ()
-    (local-set-key [(tab)] 'ted-tab-dwim))
-  (add-hook 'c-mode-hook 'my-tab-key)
-  (add-hook 'cc-mode-hook 'my-tab-key)
-  (add-hook 'c++-mode-hook 'my-tab-key)
-  (add-hook 'text-mode-hook 'my-tab-key))
 (add-hook 'emacs-lisp-mode-hook
 	  '(lambda () (local-set-key (kbd "<f5>") 'eval-current-buffer)))
 (add-hook 'dired-mode-hook
 	  '(lambda () (local-set-key (kbd "<f5>") 'eval-current-buffer)))
-
-(when nil
-  (require 'tempbuf)
-  (add-hook 'custom-mode-hook 'turn-on-tempbuf-mode)
-  (add-hook 'w3-mode-hook 'turn-on-tempbuf-mode)
-  (add-hook 'Man-mode-hook 'turn-on-tempbuf-mode)
-  (add-hook 'view-mode-hook 'turn-on-tempbuf-mode)
-  (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
-  (add-hook 'log-edit-mode-hook 'turn-on-tempbuf-mode))
-
-(when nil
-  (global-set-key (kbd "<left>") '(lambda () (interactive)
-				     (condition-case nil
-					 (if (eq (point) (point-at-bol))
-					     (signal 'beginning-of-line nil)
-					   (backward-char)))))
-  (global-set-key (kbd "<right>") '(lambda () (interactive)
-				     (condition-case nil 
-					 (if (eq (point) (point-at-eol))
-					     (signal 'end-of-line nil)
-					   (forward-char))))))
-
-;;; for Smooth Scrolling
-(when nil
-  (setq truncate-lines t)
-  (defun point-of-beginning-of-bottom-line ()
-    (save-excursion
-      (move-to-window-line -1)
-      (point)))
-  (defun next-one-line (cnt)
-    "next-one-line scrolls only 1 line unlike next-line when bottom line reached"
-    (interactive "p")
-    (if (> cnt 1)
-	(next-line cnt)
-      (if (= (point-of-beginning-of-bottom-line) (point-at-bol))
-	  (if (equal (point-at-eol) (point-max))
-	      (next-line 1)
-	    (progn (scroll-up 1)
-		   (next-line 1)))
-	(next-line 1))))
-  (defun point-of-beginning-of-top-line ()
-    (save-excursion
-      (move-to-window-line 0)
-      (point)))
-  (defun previous-one-line () (interactive)
-    "previous-one-line scrolls only 1 line unlike previous-line when top line reached"
-    (if (= (point-of-beginning-of-top-line) (point-at-bol))
-	(progn (scroll-down 1)
-	       (previous-line 1))
-      (previous-line 1)))
-  (global-set-key (kbd "<down>") 'next-one-line)
-  (global-set-key (kbd "<up>") 'previous-one-line))
 
 ;; Graphviz mode
 (when t
@@ -741,30 +548,6 @@
 	    (progn
 	      (shell-command compile-command)
 	      (graphviz-dot-preview)))))))
-
-
-(defun cthist2diffbat ()
-  ""
-  (interactive)
-  (query-replace-regexp
-   ".*create version \"\\(.*@@\\\\main\\\\\\)\\([0-9]+\\).*"
-   (quote (replace-eval-replacement concat "call ctdiff \\1" (replace-quote (- (string-to-number (match-string 2)) 1)) " \\1\\2"))
-   nil
-   (if (and transient-mark-mode mark-active) (region-beginning))
-   (if (and transient-mark-mode mark-active) (region-end))))
-
-(when nil
-  (defun cedet-ecb-toggle ()
-    (interactive)
-    (when
-	(and
-	 (load "cedet-1.0pre4/common/cedet.el")
-	 (require 'ecb nil t))
-      (if (not ecb-minor-mode)
-	  (ecb-activate)
-	(ecb-deactivate))))
-  
-  (global-set-key (kbd "<f12>") 'cedet-ecb-toggle))
 
 ;; cscope or xgtags or gtags
 (when t
@@ -780,126 +563,6 @@
     (setq cscope-kernel-mode t)
     (setq cscope-reuse-list-file t)))
 
-(when nil
-  (require 'ascope+ nil t)
-  (progn
-    (define-key ascope-list-entry-keymap "q" 'volatile-kill-buffer-and-window)
-    ;; VIM-like C-] Key
-    (global-set-key (kbd "M-.") 'ascope-find-global-definition)
-    (global-set-key (kbd "M-]") 'ascope-find-functions-calling-this-function)
-    (global-set-key (kbd "M-}") 'ascope-find-this-symbol)))
-
-(when nil
-  (require 'xgtags)
-  (global-set-key (kbd "M-.") 'xgtags-find-tag)
-  (global-set-key (kbd "M-]") 'xgtags-find-rtag)
-  (global-set-key (kbd "M-}") 'xgtags-find-symbol)
-  (xgtags-mode))
-
-(when nil
-  (setq load-path (cons "d:/root/usr/local/share/gtags" load-path))
-  (autoload 'gtags-mode "gtags" "" t)
-  (setq c-mode-hook '(lambda () (gtags-mode 1)))
-
-  (require 'company-mode)
-  (require 'gtags)
-  (require 'company-bundled-completions)
-
-;;; gtags ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-					; adapted version from gtags.el
-  (defun gtags-completion-list (prefix)
-    (let ((option "-c")
-	  (prev-buffer (current-buffer))
-	  (all-expansions nil)
-	  expansion)
-					; build completion list
-      (set-buffer (generate-new-buffer "*Completions*"))
-					;(setq option (concat option "s")))
-      (call-process "global" nil t nil option prefix)
-      (goto-char (point-min))
-      (while (looking-at gtags-symbol-regexp)
-	(setq expansion (gtags-match-string 0))
-	(setq all-expansions (cons expansion all-expansions))
-	(forward-line))
-      (kill-buffer (current-buffer))
-					; recover current buffer
-      (set-buffer prev-buffer)
-      all-expansions))
-
-  (defun company-gtags-completion-func (prefix)
-    (gtags-completion-list prefix))
-
-  (defun company-grab-gtags-prefix ()
-    (or (thing-at-point 'symbol) ""))
-
-  (defun company-install-gtags-completions ()
-    (dolist (mode '(c++-mode c-mode))
-      (company-add-completion-rule
-       mode
-       'company-grab-gtags-prefix
-       'company-gtags-completion-func)))
-
-  (provide 'company-gtags-completions))
-
-;; ;; Java mode
-;; (when nil
-;;   (add-hook 'java-mode-hook
-;; 	    (lambda ()
-;; 	      (unless (or (file-exists-p "makefile")
-;; 			  (file-exists-p "Makefile"))
-;; 		(set (make-local-variable 'compile-command)
-;; 		     (concat "javac -g " (buffer-file-name))))))
-;;   (eval-after-load "cc-mode"
-;;     '(progn
-;;        (define-key java-mode-map (kbd "<f11>") 'jdb))))
-
-;; ;; use c++ mode for .h files
-;; (setq auto-mode-alist (append '(("\\.h\\'" . c++-mode))
-;; 			      auto-mode-alist))
-
-;; ;; use conf mode for .bib files
-;; (setq auto-mode-alist (append '(("\\.bib\\'" . conf-windows-mode))
-;; 				auto-mode-alist))
-
-;; (global-set-key (kbd "S-<f5>") 'revert-buffer)
-
-;; (when (equal system-type 'windows-nt)
-;;   (defun diffa () "compare audio driver source file with corresponding one in i210" (interactive)
-;;     (ediff
-;;      buffer-file-name
-;;      (concat "x:/views/vibeq/MITS_VIBEQ_WM/Vibe/Src/Drivers/Wavedev"
-;; 	     (car (last 
-;; 		   (split-string 
-;; 		    buffer-file-name
-;; 		    "VibeQ"))))))
-
-;;   (defun diffv () "compare file with corresponding one in i210" (interactive)
-;;     (ediff
-;;      buffer-file-name
-;;      (concat "x:/views/vibeq/MITS_VIBEQ_WM/Vibe"
-;; 	     (car (last 
-;; 		   (split-string 
-;; 		    buffer-file-name
-;; 		    "MitsS3C6xxx"))))))
-
-;;   (defun difft () "compare current file with corresponding one in Tjet" (interactive)
-;;     (ediff
-;;      buffer-file-name
-;;      (concat "x:/views/Tjet/Tjet_LGT/SRC/SYSTEM/MitsS3C6xxx"
-;; 	     (car (last 
-;; 		   (split-string 
-;; 		    buffer-file-name
-;; 		    "MitsS3C6xxx"))))))
-
-;;   (defun diffs () "compare current file with corresponding one in SMDK" (interactive)
-;;     (ediff
-;;      buffer-file-name
-;;      (concat "x:/views/SMDK6410"
-;; 	     (car (last 
-;; 		   (split-string 
-;; 		    buffer-file-name
-;; 		    "MitsS3C6xxx")))))))
-
 (when t
   (defun indent-defun () "indent current defun" (interactive)
     (mark-defun)
@@ -907,19 +570,6 @@
      (region-beginning) (region-end)
      "indent -linux" t t "*Messages*" nil))
   (global-set-key (kbd "C-c C-i") 'indent-defun))
-
-;; 소리 나는 알람 대신 메시지 사용
-(when nil
-  (setq alarm-counter 0)
-  (setq ring-bell-function
-	(lambda () (interactive)
-	  (progn (setq alarm-counter (+ alarm-counter 1))
-		 (message
-		  (concat (case (% alarm-counter 10)
-			    (1 "%dst") (2 "%dnd") (3 "%drd") (otherwise "%dth"))
-			  " silent alarm") alarm-counter)))))
-
-(setq ring-bell-function nil)
 
 ;; icicles-download.el를 사용하면 icicles library를 쉽게 다운로드 받을 수 있다. 자세한 내용은 google 검색!
 (when t
